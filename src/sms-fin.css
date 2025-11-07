@@ -1,0 +1,401 @@
+@import "tailwindcss";
+/* Input styling */
+
+.input-field {
+  @apply w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm 
+         focus:ring-2 focus:ring-blue-400 focus:border-blue-400 
+         outline-none transition duration-200;
+}
+
+/* Button base */
+.btn {
+  @apply px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow;
+}
+
+/* Variants */
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700;
+}
+.btn-warning {
+  @apply bg-yellow-400 text-white hover:bg-yellow-500;
+}
+.btn-danger {
+  @apply bg-red-500 text-white hover:bg-red-600;
+}
+
+/* Table */
+.table {
+  @apply w-full text-sm text-left border-collapse;
+}
+.table thead {
+  @apply bg-blue-600 text-white text-base;
+}
+.table th,
+.table td {
+  @apply px-4 py-3 border-b border-gray-200;
+}
+.table tbody tr {
+  @apply odd:bg-white even:bg-gray-50 hover:bg-blue-50 transition-all;
+}
+
+/* Badge */
+.badge-green {
+  @apply px-2 py-1 text-xs rounded-full bg-green-100 text-green-700;
+}
+.badge-red {
+  @apply px-2 py-1 text-xs rounded-full bg-red-100 text-red-700;
+}
+
+/* Card container */
+.card {
+  @apply bg-white shadow-lg rounded-2xl border border-gray-200 p-6;
+}
+
+
+/* ================= Payments Page ================= */
+.cms-payments {
+  padding: 20px;
+}
+
+.cms-payments h2 {
+  margin-bottom: 15px;
+}
+
+.cms-payments button.add-btn {
+  margin-bottom: 15px;
+  padding: 8px 15px;
+  background: #007bff;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cms-payments button.add-btn:hover {
+  background: #0056b3;
+}
+
+.cms-payments table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cms-payments table th,
+.cms-payments table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.cms-payments table th {
+  background: #f4f4f4;
+}
+
+/* ================= Modal ================= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-container {
+  background: white;
+  padding: 20px;
+  width: 500px;
+  border-radius: 8px;
+}
+
+.modal-container h3 {
+  margin-bottom: 15px;
+}
+
+.modal-container form div {
+  margin-bottom: 10px;
+}
+
+.modal-container input {
+  width: 100%;
+  padding: 5px;
+}
+
+.modal-container button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-container button[type="submit"] {
+  background: #28a745;
+  color: white;
+}
+
+.modal-container button[type="submit"]:hover {
+  background: #218838;
+}
+
+.modal-container button[type="button"] {
+  background: #6c757d;
+  color: white;
+  margin-left: 10px;
+}
+
+.modal-container button[type="button"]:hover {
+  background: #5a6268;
+}
+
+
+.scholarships-container {
+  max-width: 1000px;   /* keeps content centered */
+  margin: 0 auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.scholarships-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.scholarship-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.scholarship-form input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn {
+  background: #007bff;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #0056b3;
+}
+
+.btn-danger {
+  background: #dc3545;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.scholarship-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.scholarship-table th,
+.scholarship-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.scholarship-table th {
+  background: #f1f1f1;
+}
+/* sms-fin.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.scholarships-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c7d2fe;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a5b4fc;
+}
+
+/* Table hover effects */
+.scholarship-table tbody tr:hover {
+  background-color: rgba(224, 231, 255, 0.5);
+  transition: background-color 0.2s ease;
+}
+
+/* Button enhancements */
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.btn-danger:hover {
+  background-color: #ef4444;
+}
+
+/* Form input focus effects */
+input:focus, select:focus {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Loading spinner */
+.loading-spinner {
+  border-top-color: #6366f1;
+  animation: spinner 1s linear infinite;
+}
+
+@keyframes spinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .table-wrapper {
+    overflow-x: auto;
+  }
+  
+  .scholarship-table {
+    min-width: 600px;
+  }
+}
+/* sms-fin.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.scholarships-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c7d2fe;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a5b4fc;
+}
+
+/* Table hover effects */
+table tbody tr:hover {
+  background-color: rgba(224, 231, 255, 0.5);
+  transition: background-color 0.2s ease;
+}
+
+/* Button enhancements */
+button {
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+button.btn-danger:hover {
+  background-color: #ef4444;
+}
+
+/* Form input focus effects */
+input:focus, select:focus {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Loading spinner */
+.loading-spinner {
+  border-top-color: #6366f1;
+  animation: spinner 1s linear infinite;
+}
+
+@keyframes spinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Modal styles */
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .table-wrapper {
+    overflow-x: auto;
+  }
+  
+  table {
+    min-width: 600px;
+  }
+  
+  .modal-content {
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
+  }
+}

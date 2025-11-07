@@ -1,0 +1,853 @@
+@import "tailwindcss";
+
+
+
+
+/* ====== Global ====== */
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* prevent any horizontal scrollbars */
+}
+
+/* Shared sizing vars: adjust one value to widen/narrow the whole content track */
+:root{
+  --header-offset: 96px;   /* if your header height changes, tweak this */
+  --content-max: 1360px;   /* WIDER: makes search bar + tables a bit longer (was 1280px) */
+
+
+  /* NEW: app + sidebar theme vars (with sensible defaults) */
+  --app-font: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --app-font-size: 14px;
+
+  --side-bg: #0f172a;         /* current dark sidebar bg */
+  --side-fg: #e2e8f0;         /* current sidebar text color */
+  --side-fg-soft: #cbd5e1;    /* softer text for secondary items */
+}
+
+
+/* ====== Manage Users (global) ====== */
+.mu-page {
+  min-height: calc(92dvh - var(--header-offset));
+  background: linear-gradient(135deg, #c7d2fe 70%, #e0e7ff 100%);
+  padding: 16px 0 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Toast */
+.toast-wrapper {
+  position: fixed;
+  top: 30px;
+  left: 0; right: 0;
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+}
+.toast-box {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #059669;
+  font-weight: 700;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px #e0e7ff, 0 4px 24px #e0e7ff66;
+  padding: 15px 40px 15px 26px;
+  font-size: 17px;
+  border: 1px solid #e0e7ff;
+  min-width: 240px;
+  background: linear-gradient(90deg,#bbf7d0,#6ee7b7);
+}
+.toast--error { color: #dc2626; background: linear-gradient(90deg,#fee2e2,#fecaca); }
+.toast-emoji { font-size: 19px; font-weight: 900; margin-right: 5px; margin-top: -2px; }
+.toast-text { flex: 1; }
+.toast-close { background: none; border: none; color: inherit; font-weight: 900; font-size: 24px; cursor: pointer; margin-left: 4px; line-height: 1; }
+
+/* Delete Modal + Generic Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44,47,68,0.19);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+.modal {
+  background: linear-gradient(120deg,#fff 90%, #f3f0ff 100%);
+  padding: 28px 30px 22px;
+  border-radius: 18px;
+  width: 420px;
+  max-width: 92vw;
+  box-shadow: 0 9px 32px rgba(80,81,140,0.17);
+  border: 1.4px solid #e0e7ff;
+  position: relative;
+  text-align: center;
+  max-height: 92vh;
+  overflow: auto;
+}
+
+/* --- Make wide modal smaller & tighter (Add/Edit College) --- */
+.modal--wide{
+  width: 760px;
+  max-width: 90vw;
+  text-align: left;
+  padding: 20px;
+}
+@media (min-width: 1280px){ .modal--wide{ width: 900px; } }
+@media (max-width: 980px){ .modal--wide{ width: 640px; } }
+@media (max-width: 640px){ .modal--wide{ width: 95vw; padding: 16px; } }
+
+.modal-x {
+  position: absolute;
+  right: 14px;
+  top: 10px;
+  border: none;
+  background: none;
+  font-size: 26px;
+  font-weight: 800;
+  color: #6366f1;
+  cursor: pointer;
+  line-height: 1;
+}
+.modal-title { font-size: 21px; color: #111827; font-weight: 800; margin-bottom: 12px; }
+.modal-title.danger { color: #b91c1c; }
+.modal-desc { font-size: 15px; color: #444; margin-bottom: 16px; }
+.modal-desc--error { color: #b91c1c; }
+.modal-desc--ok { color: #059669; }
+.highlight { color: #7c3aed; font-weight: 700; }
+.modal-actions { display: flex; gap: 16px; justify-content: center; margin-top: 10px; }
+
+/* Generic Modal Heading (Add/Edit) */
+.modal-heading {
+  color: #4f46e5;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  text-align: center;
+  margin-bottom: 14px;
+  font-size: 22px;
+}
+
+/* Container + Title */
+.mu-container { width: 100%; max-width: var(--content-max); margin: 0 auto; }
+.mu-title {
+  text-align: center;
+  color: #3b0764;
+  font-weight: 900;
+  letter-spacing: 1px;
+  font-size: 32px;
+  text-shadow: 0 2px 10px #d1d5db88;
+  margin-bottom: 12px;
+}
+
+/* Toolbar (Search + Add) */
+.mu-toolbar {
+  width: 100%;
+  max-width: var(--content-max);   /* WIDER track */
+  margin: 0 0 16px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.searchbox {
+  flex: 1 1 auto;                  /* stretch */
+  min-width: 0;                    /* prevent flex overflow */
+  height: 54px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 1px 8px #e5e7eb;
+  border: 1.5px solid #ede9fe;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.searchbox__icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #A3A3C2;
+  font-size: 22px;
+  z-index: 2;
+}
+.searchbox__icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.searchbox__input {
+  flex: 1;
+  height: 100%;
+  font-size: 18px;
+  border: none;
+  border-radius: 14px;
+  padding: 0 40px 0 52px;
+  background: transparent;
+  font-weight: 500;
+  outline: none;
+}
+.searchbox__input::placeholder { color: #A3A3C2; opacity: 1; font-weight: 500; }
+
+/* Buttons */
+.btn {
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.btn:disabled { cursor: not-allowed; opacity: 0.8; }
+.btn--add {
+  height: 46px;
+  min-width: 104px;
+  padding: 0 22px;
+  font-size: 16px;
+  background: linear-gradient(90deg, #090cef 65%);
+  color: #fff;
+  box-shadow: 0 3px 10px #818cf855;
+}
+.btn-plus { font-size: 20px; font-weight: 700; margin-top: -1px; }
+
+.btn--primary {
+  background: linear-gradient(90deg, #3c7eea 75%);
+  color: #fff;
+  padding: 7px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 2px 7px #e0e7ff;
+  margin-right: 6px;
+}
+.btn--danger {
+  background: linear-gradient(90deg, #0fa804 75%);
+  color: #fff;
+  padding: 7px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 2px 7px #fca5a5;
+}
+.btn--secondary {
+  padding: 8px 20px;
+  border-radius: 7px;
+  font-size: 15px;
+  color: #6366f1;
+  background: linear-gradient(90deg,#e0e7ff 80%,#f3f0ff);
+  box-shadow: 0 2px 7px #e0e7ff;
+}
+.btn--close-fullwidth {
+  margin-top: 12px;
+  background: linear-gradient(90deg,#818cf8,#a5b4fc);
+  color: #4b5563;
+  border-radius: 6px;
+  padding: 9px 22px;
+  font-size: 15px;
+  width: 100%;
+  box-shadow: 0 2px 8px #e0e7ff;
+}
+
+/* Table wrap (BLUE CARD AREA) */
+.mu-tablewrap-outer {
+  width: 100%;
+  max-width: var(--content-max);  /* WIDER track to match toolbar/search */
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+}
+.mu-tablewrap {
+  width: 100%;
+  max-width: var(--content-max);  /* keep table aligned with search bar */
+  background: linear-gradient(125deg,#f8fafc 70%, #e0e7ff 100%);
+  border-radius: 20px;
+  box-shadow: 0 9px 32px rgba(102,102,255,0.11);
+  padding: 18px 18px 12px;
+}
+.mu-subtitle {
+  margin: 0 0 12px 0;
+  color: #3b0764;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-shadow: 0 1.5px 6px #bdbdf670;
+  font-size: 22px;
+  text-align: center;
+}
+.mu-tablecard {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 3px 15px rgba(80,81,140,0.07);
+  border: 1.5px solid #e0e7ff;
+  overflow: hidden;             /* no inner scrollbars */
+}
+.mu-tablecard::-webkit-scrollbar { width: 0; height: 0; }
+.mu-tablecard { scrollbar-width: none; }
+
+/* ============================
+   Horizontal scroll for wide tables (Colleges)
+   ============================ */
+.mu-tablecard .mu-hscroll{
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; /* smooth on mobile */
+}
+
+/* Visible, nice horizontal scrollbar */
+.mu-tablecard .mu-hscroll::-webkit-scrollbar { height: 10px; }
+.mu-tablecard .mu-hscroll::-webkit-scrollbar-track {
+  background: #e9e9ff;
+  border-radius: 10px;
+}
+.mu-tablecard .mu-hscroll::-webkit-scrollbar-thumb {
+  background: #a5b4fc;
+  border-radius: 10px;
+}
+.mu-tablecard .mu-hscroll::-webkit-scrollbar-thumb:hover { background: #818cf8; }
+.mu-tablecard .mu-hscroll { scrollbar-width: thin; scrollbar-color: #808185 #e9e9ff; }
+
+/* Keep the table wide so columns don't crush, forcing h-scroll when needed */
+.mu-table--college{
+  min-width: 1500px;            /* adjust if you want wider/narrower */
+}
+.mu-table--college th,
+.mu-table--college td{
+  white-space: nowrap;          /* prevent wrapping so Edit/Delete stay on one line */
+}
+
+/* Make sure Actions column has enough room for both buttons
+
+/* Table */
+.mu-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #fff;
+  font-size: 17px;
+  color: #3730a3;
+}
+.mu-thead-row { background: linear-gradient(90deg,#ede9fe,#c7d2fe 70%, #e0e7ff 100%); color: #3730a3; font-weight: 800; }
+.mu-th { padding: 14px 18px; text-align: left; font-weight: 800; font-size: 16px; background: transparent; border-bottom: none; }
+.mu-thead-row th:first-child { border-top-left-radius: 14px; }
+.mu-thead-row th:last-child  { border-top-right-radius: 14px; }
+
+.mu-td { padding: 13px 18px; border-bottom: 1.2px solid #e0e7ff; font-size: 15px; }
+.mu-td--userid { color: #1e3a8a; font-weight: 700; }
+
+/* Zebra rows */
+.mu-table tbody tr:nth-child(even) { background: #f3f0ff; }
+
+/* Empty row */
+.mu-empty { padding: 18px; text-align: center; color: #818cf8; font-size: 16px; background: #f3f0ff; }
+
+/* Status pills */
+.status { font-weight: 700; }
+.status--active  { color: #059669; }
+.status--inactive{ color: #b91c1c; }
+
+/* Actions column alignment */
+.mu-table .mu-th:last-child,
+.mu-table .mu-td:last-child { text-align: center; }
+.mu-table .mu-td:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.mu-table .mu-td:last-child .btn--primary { margin-right: 0; }
+.mu-table .mu-td:last-child .btn { white-space: nowrap; }
+
+/* Pagination */
+.mu-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: #f6f7fb;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  border-top: 1.2px solid #e0e7ff;
+  font-size: 15px;
+}
+.mu-pageinfo { color: #3730a3; }
+
+.mu-pagebtns { display: flex; align-items: center; }
+.btn-page {
+  margin: 0 7px;
+  padding: 6px 12px;
+  background: #f3f0ff;
+  color: #6366f1;
+  border: 1px solid #e0e7ff;
+  border-radius: 7px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+.btn-page:disabled { color: #b5b5b5; cursor: not-allowed; }
+.badge-page { padding: 6px 12px; background: #eef2ff; color: #5b21b6; font-weight: 800; border-radius: 7px; margin: 0 2px; }
+
+/* Screenshot-style pagination chips */
+.mu-pagination--chips { padding: 12px 16px; }
+.mu-pageinfo--chips { color: #312e81; }
+.mu-pagebtns--chips { display: flex; align-items: center; gap: 8px; }
+
+.pagechip {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 10px;
+  background: #eef2ff;
+  color: #5b21b6;
+  border: 1px solid #e0e7ff;
+  font-weight: 800;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.pagechip--active { background: #ede9fe; color: #4c1d95; box-shadow: 0 2px 6px rgba(129,140,248,0.35); }
+.pagechip:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+
+/* ===================== */
+/*    FORM & GRID UI     */
+/* ===================== */
+
+.form-row { margin-bottom: 12px; }
+.form-label { font-weight: 600; color: #312e81; letter-spacing: 0.3px; margin-bottom: 4px; display: block; font-size: 13px; }
+
+.form-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  margin-top: 2px;
+  border-radius: 7px;
+  border: 1.2px solid #c7d2fe;
+  font-size: 15px;
+  background: #f9fafb;
+  outline-color: #6366f1;
+  line-height: 1.25;
+}
+
+/* Grid defaults */
+.form-grid{ display: grid; grid-template-columns: 1fr; gap: 10px; }
+
+/* >>> 3 fields per row for Add College <<< */
+.form-grid--3{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+
+.form-grid .form-row{
+  margin-bottom: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 8px 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+.form-grid .form-label{ margin-bottom: 6px; }
+
+@media (max-width: 980px){
+  .form-grid--3{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 640px){
+  .form-grid--3{ grid-template-columns: 1fr; }
+}
+
+.span-2{ grid-column: span 2; }
+.span-3{ grid-column: span 3; }
+/* Let rows span the whole 5-column grid */
+.span-4 { grid-column: span 4; }
+.span-5 { grid-column: 1 / -1; }   /* full row */
+
+/* Two-column layout inside the Fees card:
+   table on the left, summary on a right sidebar */
+.fee-grid{
+  display: grid;
+  grid-template-columns: 1fr 300px;  /* right sidebar width */
+  gap: 16px;
+  align-items: start;
+}
+
+/* Make the right column a tidy vertical stack */
+.fee-summary--side{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+}
+
+/* Responsive: on small screens, stack everything */
+@media (max-width: 1024px){
+  .fee-grid{ grid-template-columns: 1fr; }
+  .fee-summary--side{ flex-direction: row; flex-wrap: wrap; }
+}
+
+/* Submit */
+.btn--submit {
+  width: 100%;
+  padding: 10px;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.8px;
+  box-shadow: 0 2px 12px #e0e7ff;
+  background: linear-gradient(90deg,#7c3aed,#6366F1 60%,#a5b4fc);
+}
+.btn--submit.is-loading {
+  background: linear-gradient(90deg,#818cf8,#a5b4fc);
+}
+
+/* ========================= */
+/*  Student Modal Overrides  */
+/* ========================= */
+
+.modal--wide{
+  width: 1100px;
+  max-width: 96vw;
+  padding: 16px;
+}
+@media (min-width: 1400px){ .modal--wide{ width: 1180px; } }
+@media (max-width: 1200px){ .modal--wide{ width: 960px; } }
+@media (max-width: 980px){ .modal--wide{ width: 760px; } }
+@media (max-width: 760px){ .modal--wide{ width: 96vw; } }
+
+/* 5-column compact grid for Add/Edit Student */
+.form-grid--5{
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0,1fr));
+  gap: 10px;
+}
+.form-grid--5 .form-row{
+  margin-bottom: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 8px 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+.form-grid--5 .form-label{ margin-bottom: 6px; }
+.form-grid--5 .form-input{ padding: 8px 10px; font-size: 14.5px; line-height: 1.25; }
+
+@media (max-width: 1280px){ .form-grid--5 { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+@media (max-width: 980px){ .form-grid--5 { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+@media (max-width: 720px){ .form-grid--5 { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 520px){ .form-grid--5 { grid-template-columns: 1fr; } }
+
+.form-grid--5 .form-row input[type="checkbox"]{
+  transform: scale(1.15);
+  margin: 6px 4px 2px 2px;
+}
+
+/* ========================================================= */
+/*  FIXED COLUMNS (Manage Users → “All Users” table only)    */
+/* ========================================================= */
+
+.mu-table--fixed { table-layout: fixed; width: 100%; }
+.mu-table--fixed thead th,
+.mu-table--fixed tbody td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mu-table--fixed thead th:nth-child(1),
+.mu-table--fixed tbody td:nth-child(1) { width: 44%; }
+.mu-table--fixed thead th:nth-child(2),
+.mu-table--fixed tbody td:nth-child(2) { width: 22%; }
+.mu-table--fixed thead th:nth-child(3),
+.mu-table--fixed tbody td:nth-child(3) { width: 14%; }
+.mu-table--fixed thead th:nth-child(4),
+.mu-table--fixed tbody td:nth-child(4) { width: 20%; }
+.mu-table--fixed thead th:nth-child(4),
+.mu-table--fixed tbody td:nth-child(4) {
+  overflow: visible; text-overflow: initial; white-space: nowrap;
+}
+@media (max-width: 900px){
+  .mu-table--fixed thead th:nth-child(1),
+  .mu-table--fixed tbody td:nth-child(1) { width: 50%; }
+  .mu-table--fixed thead th:nth-child(2),
+  .mu-table--fixed tbody td:nth-child(2) { width: 22%; }
+  .mu-table--fixed thead th:nth-child(3),
+  .mu-table--fixed tbody td:nth-child(3) { width: 12%; }
+  .mu-table--fixed thead th:nth-child(4),
+  .mu-table--fixed tbody td:nth-child(4) { width: 16%; }
+}
+.mu-table--fixed tbody tr { height: 52px; }
+
+/* ===================================================================== */
+/*  FIXED COLUMNS (All User Roles table ONLY)                             */
+/* ===================================================================== */
+
+.mu-table--fixed-roles { table-layout: fixed; width: 100%; }
+.mu-table--fixed-roles .mu-th,
+.mu-table--fixed-roles .mu-td { padding-left: 16px; padding-right: 16px; }
+.mu-table--fixed-roles thead th,
+.mu-table--fixed-roles tbody td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mu-table--fixed-roles thead th:nth-child(1),
+.mu-table--fixed-roles tbody td:nth-child(1) { width: 20%; }
+.mu-table--fixed-roles thead th:nth-child(2),
+.mu-table--fixed-roles tbody td:nth-child(2) { width: 24%; }
+.mu-table--fixed-roles thead th:nth-child(3),
+.mu-table--fixed-roles tbody td:nth-child(3) { width: 18%; }
+.mu-table--fixed-roles thead th:nth-child(4),
+.mu-table--fixed-roles tbody td:nth-child(4) { width: 18%; }
+.mu-table--fixed-roles thead th:nth-child(5),
+.mu-table--fixed-roles tbody td:nth-child(5) { width: 20%; min-width: 140px; }
+.mu-table--fixed-roles thead th:nth-child(5),
+.mu-table--fixed-roles tbody td:nth-child(5) {
+  overflow: visible; text-overflow: initial; white-space: nowrap;
+}
+@media (max-width: 980px){
+  .mu-table--fixed-roles thead th:nth-child(1),
+  .mu-table--fixed-roles tbody td:nth-child(1) { width: 22%; }
+  .mu-table--fixed-roles thead th:nth-child(2),
+  .mu-table--fixed-roles tbody td:nth-child(2) { width: 26%; }
+  .mu-table--fixed-roles thead th:nth-child(3),
+  .mu-table--fixed-roles tbody td:nth-child(3) { width: 18%; }
+  .mu-table--fixed-roles thead th:nth-child(4),
+  .mu-table--fixed-roles tbody td:nth-child(4) { width: 18%; }
+  .mu-table--fixed-roles thead th:nth-child(5),
+  .mu-table--fixed-roles tbody td:nth-child(5) { width: 16%; min-width: 130px; }
+}
+.mu-table--fixed-roles tbody tr { height: 52px; }
+
+/* ===================================================================== */
+/*  FIXED COLUMNS (Master Roles table ONLY) — NO H-SCROLL                 */
+/* ===================================================================== */
+
+.mu-table--fixed-masterroles {
+  table-layout: fixed;
+  width: 100%;
+}
+.mu-table--fixed-masterroles .mu-th,
+.mu-table--fixed-masterroles .mu-td {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+.mu-table--fixed-masterroles thead th,
+.mu-table--fixed-masterroles tbody td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mu-table--fixed-masterroles thead th:nth-child(1),
+.mu-table--fixed-masterroles tbody td:nth-child(1) { width: 18%; } /* Role ID */
+.mu-table--fixed-masterroles thead th:nth-child(2),
+.mu-table--fixed-masterroles tbody td:nth-child(2) { width: 24%; } /* Role Description */
+.mu-table--fixed-masterroles thead th:nth-child(3),
+.mu-table--fixed-masterroles tbody td:nth-child(3) { width: 19%; } /* Created At */
+.mu-table--fixed-masterroles thead th:nth-child(4),
+.mu-table--fixed-masterroles tbody td:nth-child(4) { width: 19%; } /* Updated At */
+.mu-table--fixed-masterroles thead th:nth-child(5),
+.mu-table--fixed-masterroles tbody td:nth-child(5) { width: 20%; min-width: 140px; } /* Actions */
+.mu-table--fixed-masterroles thead th:nth-child(5),
+.mu-table--fixed-masterroles tbody td:nth-child(5) {
+  overflow: visible;
+  text-overflow: initial;
+  white-space: nowrap;
+}
+@media (max-width: 980px){
+  .mu-table--fixed-masterroles thead th:nth-child(1),
+  .mu-table--fixed-masterroles tbody td:nth-child(1) { width: 20%; }
+  .mu-table--fixed-masterroles thead th:nth-child(2),
+  .mu-table--fixed-masterroles tbody td:nth-child(2) { width: 26%; }
+  .mu-table--fixed-masterroles thead th:nth-child(3),
+  .mu-table--fixed-masterroles tbody td:nth-child(3) { width: 18%; }
+  .mu-table--fixed-masterroles thead th:nth-child(4),
+  .mu-table--fixed-masterroles tbody td:nth-child(4) { width: 18%; }
+  .mu-table--fixed-masterroles thead th:nth-child(5),
+  .mu-table--fixed-masterroles tbody td:nth-child(5) { width: 18%; min-width: 130px; }
+}
+.mu-table--fixed-masterroles tbody tr { height: 52px; }
+
+/* ===================================================================== */
+/*  DELETE CONFIRM POPUP (matches screenshot style)                      */
+/* ===================================================================== */
+
+.confirm-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17,24,39,0.28);
+  -webkit-backdrop-filter: blur(2.5px) saturate(1.1);
+  backdrop-filter: blur(2.5px) saturate(1.1);
+}
+.confirm{
+  width: 560px;
+  max-width: 92vw;
+  background: linear-gradient(180deg,#ffffff 0%, #f8f8ff 100%);
+  border: 1.2px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 22px 24px 20px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(2,6,23,0.20);
+  position: relative;
+}
+.confirm-x{
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  border: none;
+  background: none;
+  font-size: 22px;
+  font-weight: 800;
+  color: #6366f1;
+  cursor: pointer;
+  line-height: 1;
+}
+.confirm-title{
+  font-size: 22px;
+  font-weight: 900;
+  color: #b91c1c;  /* red title */
+  margin-bottom: 10px;
+}
+.confirm-desc{
+  color: #374151;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+.confirm-user{
+  display: inline-block;
+  font-weight: 800;
+  color: #6d28d9;  /* purple id/email look */
+  text-decoration: underline;
+  margin-bottom: 12px;
+}
+.confirm-actions{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.confirm-btn{
+  min-width: 120px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+/* ================================
+   Classroom page: smaller table fonts ONLY
+   (Search bar and other global styles unchanged)
+   ================================= */
+.classroom-slim .mu-table {
+  font-size: 14px;            /* base inside the table */
+}
+.classroom-slim .mu-th {
+  font-size: 13px;            /* header text smaller */
+  padding: 10px 14px;         /* a touch tighter */
+}
+.classroom-slim .mu-td {
+  font-size: 12.5px;          /* body text smaller */
+  padding: 9px 14px;
+}
+.classroom-slim .mu-table tbody tr {
+  height: 44px;               /* slightly reduced row height */
+}
+
+/* Pagination text under the table */
+.classroom-slim .mu-pagination {
+  font-size: 13.5px;
+}
+.classroom-slim .btn-page,
+.classroom-slim .badge-page {
+  font-size: 13px;
+  padding: 5px 10px;
+}
+/* ============================
+   Whiteboard Manager utilities
+   ============================ */
+
+.pos-rel { position: relative; }
+.row-8 { display: flex; align-items: center; gap: 8px; }
+.mb-20 { margin-bottom: 20px; }
+
+/* Color input box (picker next to text field) */
+.input-color {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  padding: 0;
+}
+
+/* Color dropdown panel */
+.color-popper {
+  position: absolute;
+  top: 100%;
+  z-index: 20;
+  margin-top: 8px;
+  width: 320px;
+  max-height: 260px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  padding: 8px;
+}
+.color-popper.align-left  { left: 0; }
+.color-popper.align-right { right: 0; }
+
+.color-picker__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* SVG swatch sizing (color comes from SVG rect fill attribute) */
+.color-swatch { display: inline-block; }
+
+/* Header image preview row */
+.wb-preview-row {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.wb-header-preview {
+  width: 220px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Table thumbnail */
+.wb-header-thumb {
+  width: 80px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Horizontal scroll container */
+.mu-hscroll{
+  width: 100%;
+  overflow-x: auto;            /* shows horizontal scrollbar when needed */
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Make the teacher table prefer scrolling instead of wrapping */
+.mu-table--teacher{
+  min-width: 1400px;           /* adjust to taste (1200–1600px) */
+}
+.mu-table--teacher th,
+.mu-table--teacher td{
+  white-space: nowrap;         /* keep cells on one line */
+}
